@@ -1,0 +1,78 @@
+# pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: sqlite-pv
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data" 
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sqlite-pvc
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  selector:
+    matchLabels:
+      type: local
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sqlite
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sqlite
+  template:
+    metadata:
+      labels:
+        app: sqlite
+    spec:
+      volumes:
+        - name: sqlite-storage
+          persistentVolumeClaim:
+            claimName: sqlite-pvc
+      containers:
+        - name: sqlite
+          image: sqlite-image:latest
+          env:
+          - name: SQLITE_PASSWORD
+            value: IBelieveICanFly
+          ports:
+          - containerPort: 5432
+          volumeMounts:
+          - mountPath: "/data"
+            name: sqlite-storage
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: sqlite-service
+spec:
+  selector:
+    app: sqlite
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432

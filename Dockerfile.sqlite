@@ -1,0 +1,32 @@
+# Use a base image
+FROM ubuntu:trusty
+
+# Update and upgrade packages
+RUN apt-get -y update && apt-get -y upgrade
+
+# Install SQLite and its development library
+RUN apt-get install -y sqlite3 libsqlite3-dev
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the schema.sql file into the container
+COPY schema.sql /app/
+
+# Create a directory for the SQLite data
+RUN mkdir -p /var/lib/sqlite/data
+
+# Set permissions (adjust as needed)
+RUN chmod 777 /var/lib/sqlite/data
+
+# Run SQLite to create a test database
+RUN sqlite3 /var/lib/sqlite/data/database.db < /app/schema.sql
+
+# Expose any necessary ports
+EXPOSE 5432
+
+# Define any environment variables
+ENV SQLITE_PASSWORD=IBelieveICanFly
+
+# Set the default command to run when the container starts
+CMD ["sqlite3", "/var/lib/sqlite/data/database.db"]

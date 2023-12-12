@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: kanban-app
-        image: your-kanban-app-image:latest
+        image: my-kanban-app-image:latest
         imagePullPolicy: IfNotPresent
         resources:
           limits:

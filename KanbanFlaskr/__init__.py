@@ -4,11 +4,17 @@ from . import db
 
 def create_app(test_config=None):
     # create and configure the app
-    app = Flask(__name__, instance_relative_config=True)
+    # app = Flask(__name__, instance_relative_config=True)
+    app = Flask(__name__)
     app.config.from_mapping(
-        SECRET_KEY= "IBelieveICanFly",
-        DATABASE=os.path.join(app.instance_path, 'kanban.sqlite'), # no sql database for the simple version
+        SECRET_KEY="IBelieveICanFly",
+        SQLALCHEMY_DATABASE_URI=os.getenv("DATABASE_URL", "sqlite:////data/app.db"),
+        SQLALCHEMY_TRACK_MODIFICATIONS=False,
     )
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////data/app.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.secret_key = 'IBelieveICanFly'
 
     if test_config is None:
         # load the instance config, if it exists, when not testing

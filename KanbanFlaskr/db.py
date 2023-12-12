@@ -3,7 +3,6 @@ import sqlite3
 import click
 from flask import current_app, g
 
-
 def get_db():
     # g is a special object that is unique for each request.
     # used to store data that might be accessed by multiple functions during the request.

@@ -15,6 +15,9 @@ EXPOSE 8000
 
 ENV FLASK_APP app.py
 
-RUN flask init-db
+# Database
+# RUN mkdir -p /data
+# RUN chmod 777 /data
+# RUN flask init-db
 
 CMD ["python3", "app.py"]
